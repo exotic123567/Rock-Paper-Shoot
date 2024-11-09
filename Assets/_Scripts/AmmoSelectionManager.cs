@@ -52,6 +52,9 @@ public class AmmoSelectionManager : MonoBehaviour
                 outline.enabled = false;
             }
         }
+        if (AudioManager.instance != null) {
+            AudioManager.instance.PlayAmmoTypeseleectionSound();
+        }
 
         // Enable the selected button's outline
         Outline selectedOutline = ammoButtons[ammoType].GetComponent<Outline>();

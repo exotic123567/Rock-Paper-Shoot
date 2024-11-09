@@ -3,7 +3,8 @@ using Unity.Netcode;
 
 public class StartNetwork : MonoBehaviour
 {
-    public void StartServer() {
+    public void StartServer()
+    {
         NetworkManager.Singleton.StartServer();
     }
     public void StartClient() {

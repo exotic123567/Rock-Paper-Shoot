@@ -52,6 +52,10 @@ public class Ammo : NetworkBehaviour
             {
                 plc.UpdateAmmo(ammoType.Value);
                 Debug.Log("Player collided with ammo!");
+                if (AudioManager.instance != null)
+                {
+                    AudioManager.instance.PlayAmmoPickupSound();
+                }
                 NetworkObject.Despawn();
                 NetworkObjectPool.Singleton.ReturnNetworkObject(NetworkObject, prefab);
                 

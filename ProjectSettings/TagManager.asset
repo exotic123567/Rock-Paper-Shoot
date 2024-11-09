@@ -13,6 +13,12 @@ TagManager:
   - AmmoIndicator
   - HealthBar
   - leftjoystick
+  - AudioManager
+  - InitialClassDisplayer
+  - TextInitializer
+  - ScoreCard
+  - ScoreText
+  - playersightgradientmask
   layers:
   - Default
   - TransparentFX

@@ -9,6 +9,7 @@ public class Bullet : NetworkBehaviour
     public GameObject prefab;
     [SerializeField] public int bulltypepublic;
     private NetworkVariable<uint> bulletType = new NetworkVariable<uint>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<ulong> shooterId = new NetworkVariable<ulong>();
     private void Awake() {
         
     }
@@ -24,6 +25,15 @@ public class Bullet : NetworkBehaviour
         {
             bulletType.Value = (uint)bulltypepublic;
             StartCoroutine(DeleteAfterSomeTime());
+        }
+    }
+    
+    // Method to set shooterId on the server when bullet is fired
+    public void SetShooterId(ulong shooterClientId)
+    {
+        if (IsServer) // Ensure only the server sets this value
+        {
+            shooterId.Value = shooterClientId;
         }
     }
 
@@ -44,12 +54,29 @@ public class Bullet : NetworkBehaviour
             uint tempdecreaseval = 1;
             if (plc.shouldthisbulletdefeatplayer(bulletType.Value))
             {
-                plc.DecreaseHP(tempdecreaseval); 
+                plc.DecreaseHP(tempdecreaseval, shooterId.Value); 
+                
+                
+                
+                // Trigger the color change on the client side
+                TriggerColorChangeClientRpc(plc.OwnerClientId, "#FF7D7D");
                 Debug.Log("HP Decreased!!!");
             }
             Debug.Log("Player collided with bullet!");
         }
         BulletNetworkObjectPool.Singleton.ReturnNetworkObject(NetworkObject, prefab);
         NetworkObject.Despawn();
+    }
+    [ClientRpc]
+    private void TriggerColorChangeClientRpc(ulong targetClientId, string hexColor)
+    {
+        // Get the player that needs to change color
+        foreach (var player in FindObjectsOfType<PlayerController>())
+        {
+            if (player.OwnerClientId == targetClientId)
+            {
+                player.OnHit(hexColor); // Call the OnHit method to change color on client
+            }
+        }
     }
 }

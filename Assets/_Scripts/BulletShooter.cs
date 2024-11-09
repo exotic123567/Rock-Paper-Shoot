@@ -30,9 +30,12 @@ public class BulletShooter : NetworkBehaviour
         
         Vector3 shootingDirection = playerObject.transform.right;
         Vector3 playerPosition = playerObject.transform.position;
+        
+        // Get the shooter's NetworkObjectId to identify the player who fired
+        ulong shooterId = playerObject.GetComponent<NetworkObject>().NetworkObjectId;
 
         // Client requests the server to spawn the bullet
-        ShootAmmoServerRpc(ammoTypeIndex, playerPosition, shootingDirection);
+        ShootAmmoServerRpc(ammoTypeIndex, playerPosition, shootingDirection, shooterId);
         if (playerObject.TryGetComponent(out PlayerController plc))
         {
             plc.DecreaseAmmoServerRpc(ammoTypeIndex);
@@ -40,12 +43,13 @@ public class BulletShooter : NetworkBehaviour
         
     }
     [ServerRpc(RequireOwnership = false)]
-    private void ShootAmmoServerRpc(int ammoTypeIndex, Vector3 playerPosition, Vector3 shootingDirection)
+    private void ShootAmmoServerRpc(int ammoTypeIndex, Vector3 playerPosition, Vector3 shootingDirection, ulong shooterId)
     {
         // This runs only on the server
-        ShootAmmo(ammoTypeIndex, playerPosition, shootingDirection);
+        ShootAmmo(ammoTypeIndex, playerPosition, shootingDirection, shooterId);
+        PlayShooterSoundClientRPC();
     }
-    private void ShootAmmo(int ammoTypeIndex, Vector3 playerPosition, Vector3 shootingDirection)
+    private void ShootAmmo(int ammoTypeIndex, Vector3 playerPosition, Vector3 shootingDirection, ulong shooterId)
     {
         if (!IsServer) return;  // Ensure only the server spawns bullets
 
@@ -59,10 +63,13 @@ public class BulletShooter : NetworkBehaviour
         {
             obj.Spawn(true);  // Spawn bullet on the server and replicate to all clients
         }
-        
+
         // Set the prefab reference in the bullet script
         Bullet bullet = obj.GetComponent<Bullet>();
         bullet.prefab = prefabs[ammoTypeIndex];
+
+        // Assign the shooterId to the bullet
+        bullet.SetShooterId(shooterId);
 
         // Apply velocity to the bullet
         Rigidbody2D bulletRb = obj.GetComponent<Rigidbody2D>();
@@ -70,6 +77,16 @@ public class BulletShooter : NetworkBehaviour
         {
             bulletRb.velocity = shootingDirection * bulletSpeed;
         }
-        Debug.Log("Bullet has been shot by bulletshooter script...");
+
+        Debug.Log("Bullet has been shot by player with ID: " + shooterId);
+    }
+
+    [ClientRpc]
+    private void PlayShooterSoundClientRPC()
+    {
+        if (!IsOwner) return;
+        if (AudioManager.instance != null) {
+            AudioManager.instance.PlayBulletshooterSound();
+        }
     }
 }
