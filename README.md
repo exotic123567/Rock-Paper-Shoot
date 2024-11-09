@@ -95,8 +95,8 @@ Feedback and suggestions are highly welcome!
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/repo-name.git
-   cd repo-name
+   git clone https://github.com/exotic123567/Rock-Paper-Shoot.git
+   cd Rock-Paper-Shoot
    ```
 
 2. **Install Unity Packages**:
