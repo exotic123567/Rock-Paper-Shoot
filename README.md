@@ -134,3 +134,7 @@ Feel free to submit issues, fork the repository, and send pull requests. Contrib
 - **Kenney Assets** for game assets
 
 ---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
