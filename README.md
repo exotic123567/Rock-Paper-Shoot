@@ -36,7 +36,6 @@ Players need to pick up the right ammo type to counter their opponents' hidden c
 - **Cross-Platform Compatibility:** Connect players across platforms, including Android and Linux server hosting.
 - **Dynamic Ammo System:** Unique ammo types (rock, paper, scissors) tied to player classes, with corresponding interactions.
 - **Server Authority:** Server-driven physics and logic for game balance and anti-cheat.
-- **Radial Boundary Visualization:** A unique gradient boundary visualization as players approach the edges of the game area.
 
 ---
 
